@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>方程式の数値解法シミュレータ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>方程式の数値解法シミュレータ</h1>
+  <div id="controls">
+    <label>関数 f(x): x³ - x - 2</label><br>
+    <input type="radio" name="method" value="bisection" checked>2分法
+    <input type="radio" name="method" value="newton">ニュートン法<br>
+    <div id="bisection-inputs">
+      a: <input type="number" id="a" value="1">,
+      b: <input type="number" id="b" value="2">
+    </div>
+    <div id="newton-inputs" style="display: none;">
+      x₀: <input type="number" id="x0" value="1.5">
+    </div>
+    許容誤差 ε: <input type="number" id="epsilon" value="0.0001" step="0.0001"><br>
+    <button onclick="runSimulation()">シミュレーション開始</button>
+  </div>
+  <canvas id="graph" width="600" height="400"></canvas>
+  <script src="math.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
