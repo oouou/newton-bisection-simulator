@@ -11,10 +11,10 @@ function runSimulation() {
   if (method === "bisection") {
     let a = parseFloat(document.getElementById("a").value);
     let b = parseFloat(document.getElementById("b").value);
-    bisection(ctx, a, b, epsilon);
+    bisectionAnimate(ctx, a, b, epsilon);
   } else {
     let x0 = parseFloat(document.getElementById("x0").value);
-    newton(ctx, x0, epsilon);
+    newtonAnimate(ctx, x0, epsilon);
   }
 }
 
@@ -38,24 +38,26 @@ function drawPoint(ctx, x, color) {
   ctx.fill();
 }
 
-function bisection(ctx, a, b, epsilon) {
-  let mid;
-  for (let i = 0; i < 20; i++) {
-    mid = (a + b) / 2;
-    drawPoint(ctx, mid, "red");
-    if (Math.abs(f(mid)) < epsilon) break;
-    if (f(a) * f(mid) < 0) b = mid;
-    else a = mid;
-  }
+function bisectionAnimate(ctx, a, b, epsilon, step = 0) {
+  if (step >= 20) return;
+  const mid = (a + b) / 2;
+  drawPoint(ctx, mid, "red");
+  if (Math.abs(f(mid)) < epsilon) return;
+  if (f(a) * f(mid) < 0) b = mid;
+  else a = mid;
+  setTimeout(() => {
+    bisectionAnimate(ctx, a, b, epsilon, step + 1);
+  }, 500);
 }
 
-function newton(ctx, x, epsilon) {
-  for (let i = 0; i < 20; i++) {
-    drawPoint(ctx, x, "green");
-    let x1 = x - f(x) / df(x);
-    if (Math.abs(x1 - x) < epsilon) break;
-    x = x1;
-  }
+function newtonAnimate(ctx, x, epsilon, step = 0) {
+  if (step >= 20) return;
+  drawPoint(ctx, x, "green");
+  const x1 = x - f(x) / df(x);
+  if (Math.abs(x1 - x) < epsilon) return;
+  setTimeout(() => {
+    newtonAnimate(ctx, x1, epsilon, step + 1);
+  }, 500);
 }
 
 document.querySelectorAll('input[name="method"]').forEach(el => {
@@ -66,3 +68,4 @@ document.querySelectorAll('input[name="method"]').forEach(el => {
       el.value === "newton" ? "inline" : "none";
   });
 });
+
