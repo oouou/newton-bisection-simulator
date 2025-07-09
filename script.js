@@ -18,7 +18,35 @@ function runSimulation() {
   }
 }
 
+function drawAxes(ctx) {
+  ctx.beginPath();
+  ctx.moveTo(0, 200);         // x軸（水平方向）y = 0
+  ctx.lineTo(600, 200);
+  ctx.moveTo(300, 0);         // y軸（垂直方向）x = 0
+  ctx.lineTo(300, 400);
+  ctx.strokeStyle = "#000";   // 黒色
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // x軸ラベル
+  ctx.font = "12px sans-serif";
+  ctx.fillStyle = "black";
+  for (let x = -3; x <= 3; x++) {
+    const px = 300 + x * 100;
+    ctx.fillText(x.toString(), px - 5, 215);
+  }
+
+  // y軸ラベル
+  for (let y = -5; y <= 5; y++) {
+    const py = 200 - y * 20;
+    ctx.fillText(y.toString(), 305, py + 4);
+  }
+}
+
 function drawFunction(ctx) {
+  ctx.clearRect(0, 0, 600, 400);
+  drawAxes(ctx); // ← ここで座標軸を描画
+  
   ctx.beginPath();
   for (let px = 0; px <= 600; px++) {
     let x = (px - 300) / 100;
