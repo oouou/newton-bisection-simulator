@@ -142,3 +142,13 @@ function bisectionAnimate(ctx, a, b, epsilon) {
 
   stepFunc();
 }
+
+// メソッド選択時の入力欄表示切替
+document.querySelectorAll('input[name="method"]').forEach(el => {
+  el.addEventListener("change", () => {
+    document.getElementById("bisection-inputs").style.display =
+      el.value === "bisection" ? "inline" : "none";
+    document.getElementById("newton-inputs").style.display =
+      el.value === "newton" ? "inline" : "none";
+  });
+});
