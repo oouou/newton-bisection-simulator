@@ -1,8 +1,20 @@
 
+let f = x => x ** 3 - x - 2; // 初期値（必要）
+
 function runSimulation() {
   const canvas = document.getElementById("graph");
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 関数式を取得して文字列から関数へ変換
+  const funcStr = document.getElementById("functionInput").value;
+  try {
+    f = new Function("x", `return ${funcStr};`);
+  } catch (e) {
+    alert("関数の入力に誤りがあります");
+    return;
+  }
+
   drawFunction(ctx);
 
   const method = document.querySelector('input[name="method"]:checked').value;
@@ -16,6 +28,11 @@ function runSimulation() {
     let x0 = parseFloat(document.getElementById("x0").value);
     newtonAnimate(ctx, x0, epsilon);
   }
+}
+
+function df(x) {
+  const h = 0.0001;
+  return (f(x + h) - f(x - h)) / (2 * h);
 }
 
 function drawFunction(ctx) {
@@ -38,83 +55,40 @@ function drawPoint(ctx, x, color) {
   ctx.fill();
 }
 
-function drawLabel(ctx, x, label) {
-  ctx.fillStyle = "black";
-  ctx.font = "12px sans-serif";
-  ctx.fillText(label, 300 + x * 100 + 5, 200 - f(x) * 20 - 10);
+function bisectionAnimate(ctx, a, b, epsilon, i = 0) {
+  if (i > 20) return;
+  let mid = (a + b) / 2;
+  drawPoint(ctx, mid, "red");
+  if (Math.abs(f(mid)) < epsilon) return;
+  setTimeout(() => {
+    if (f(a) * f(mid) < 0) {
+      bisectionAnimate(ctx, a, mid, epsilon, i + 1);
+    } else {
+      bisectionAnimate(ctx, mid, b, epsilon, i + 1);
+    }
+  }, 1000);
 }
 
-function drawTangentLine(ctx, x) {
-  const slope = df(x);
-  const y = f(x);
-  const x1 = x - 1, x2 = x + 1;
-  const y1 = y + slope * (x1 - x);
-  const y2 = y + slope * (x2 - x);
+function newtonAnimate(ctx, x, epsilon, i = 0) {
+  if (i > 20) return;
+  drawPoint(ctx, x, "green");
+  let slope = df(x);
+  let intercept = f(x) - slope * x;
+  drawLine(ctx, x - 1, slope * (x - 1) + intercept, x + 1, slope * (x + 1) + intercept, "orange");
 
+  let x1 = x - f(x) / df(x);
+  if (Math.abs(x1 - x) < epsilon) return;
+  setTimeout(() => newtonAnimate(ctx, x1, epsilon, i + 1), 1000);
+}
+
+function drawLine(ctx, x1, y1, x2, y2, color) {
   ctx.beginPath();
   ctx.moveTo(300 + x1 * 100, 200 - y1 * 20);
   ctx.lineTo(300 + x2 * 100, 200 - y2 * 20);
-  ctx.strokeStyle = "orange";
-  ctx.setLineDash([5, 3]);
+  ctx.strokeStyle = color;
   ctx.stroke();
-  ctx.setLineDash([]);
 }
 
-function drawInterval(ctx, a, b) {
-  const ax = 300 + a * 100;
-  const bx = 300 + b * 100;
-  ctx.beginPath();
-  ctx.moveTo(ax, 200);
-  ctx.lineTo(bx, 200);
-  ctx.strokeStyle = "purple";
-  ctx.setLineDash([4, 4]);
-  ctx.stroke();
-  ctx.setLineDash([]);
-}
-
-// アニメーション付きニュートン法
-function newtonAnimate(ctx, x, epsilon) {
-  let step = 0;
-
-  function stepFunc() {
-    drawPoint(ctx, x, "green");
-    drawLabel(ctx, x, "x" + step);
-    drawTangentLine(ctx, x);
-
-    let x1 = x - f(x) / df(x);
-    if (Math.abs(x1 - x) < epsilon || step >= 20) return;
-
-    step++;
-    x = x1;
-    setTimeout(stepFunc, 1000);
-  }
-
-  stepFunc();
-}
-
-// アニメーション付き2分法
-function bisectionAnimate(ctx, a, b, epsilon) {
-  let step = 0;
-
-  function stepFunc() {
-    let mid = (a + b) / 2;
-    drawInterval(ctx, a, b);
-    drawPoint(ctx, mid, "red");
-    drawLabel(ctx, mid, "x" + step);
-
-    if (Math.abs(f(mid)) < epsilon || step >= 20) return;
-
-    if (f(a) * f(mid) < 0) b = mid;
-    else a = mid;
-
-    step++;
-    setTimeout(stepFunc, 1000);
-  }
-
-  stepFunc();
-}
-
-// メソッド選択時の入力欄表示切替
 document.querySelectorAll('input[name="method"]').forEach(el => {
   el.addEventListener("change", () => {
     document.getElementById("bisection-inputs").style.display =
