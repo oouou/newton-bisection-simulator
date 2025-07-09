@@ -9,7 +9,8 @@
 <body>
   <h1>方程式の数値解法シミュレータ</h1>
   <div id="controls">
-    <label>関数 f(x): x³ - x - 2</label><br>
+    <label>関数 f(x):</label>
+    <input type="text" id="functionInput" value="x**3 - x - 2"><br>
     <input type="radio" name="method" value="bisection" checked>2分法
     <input type="radio" name="method" value="newton">ニュートン法<br>
     <div id="bisection-inputs">
@@ -23,7 +24,6 @@
     <button onclick="runSimulation()">シミュレーション開始</button>
   </div>
   <canvas id="graph" width="600" height="400"></canvas>
-  <script src="math.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
