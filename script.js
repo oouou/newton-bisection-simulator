@@ -56,6 +56,7 @@ function drawFunction(ctx) {
     else ctx.lineTo(px, py);
   }
   ctx.strokeStyle = "blue";
+  ctx.lineWidth = 2;
   ctx.stroke();
 }
 
