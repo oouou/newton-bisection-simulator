@@ -1,5 +1,5 @@
 
-let f = x => x ** 3 - x - 2; // 初期値（必要）
+let f = x => x ^ 3 - x - 2; // 初期値（必要）
 
 function parseFunction(expr) {
   return new Function("x", "return " + expr + ";");
